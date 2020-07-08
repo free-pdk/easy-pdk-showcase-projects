@@ -20,15 +20,6 @@ Write to IC:
 PFS173:
 $ easypdkprog --icname=PFS173 write build/polysound.PFS173.ihx
 
-PFS172:
-$ easypdkprog --icname=PFS172 write build/polysound.PFS172.ihx
-
-PFS154:
-$ easypdkprog --icname=PFS154 write build/polysound.PFS154.ihx
-
-PMS150C:
-$ easypdkprog --icname=PMS150C write build/polysound.PMS150C.ihx
-
 
 Wiring:
 =======

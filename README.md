@@ -10,3 +10,4 @@ Every project implements a full multi-platform (Linux/MacOS/Windows) emulation. 
 ## Projects
  * [ws2812animation16x16](https://github.com/free-pdk/easy-pdk-showcase-projects/tree/master/ws2812animation16x16) : 16x16 RGB LED matrix animation
  * [polysound](https://github.com/free-pdk/easy-pdk-showcase-projects/tree/master/polysound) : Polyphonic sound player emulating the 4 NES sound and playing a famous tune
+ * [audioplayer](https://github.com/free-pdk/easy-pdk-showcase-projects/tree/master/audioplayer) : Good quality audioplayer using external flash

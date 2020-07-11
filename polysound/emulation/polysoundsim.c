@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdlib.h>
 
 // declare that we implement SEND_SAMPLE function
 #define SEND_SAMPLE SEND_SAMPLE

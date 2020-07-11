@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdlib.h>
 
 // select emulation target
 #define PFS173

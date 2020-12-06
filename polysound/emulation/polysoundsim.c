@@ -26,7 +26,7 @@ void SEND_SAMPLE(uint8_t sample);
 #include <stdio.h>
 #include <SDL.h>
 
-#define WAV_BUFFER_SIZE 4096
+#define WAV_BUFFER_SIZE 8192
 static uint8_t  wav_buffer[WAV_BUFFER_SIZE];        //buffer to hold the samples
 static uint16_t wav_buffer_pos = 0;                 //buffer write index
 static uint16_t wav_buffer_chunk = WAV_BUFFER_SIZE; //actual length of buffer used by system (might be WAV_BUFFER_SIZE/2)
@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
   //setup audio device and start playback
   wav_buffer_empty = SDL_CreateSemaphore(0);        //create semaphore
   wav_buffer_full  = SDL_CreateSemaphore(0);        //create semaphore
-  SDL_AudioSpec sdlas = { .freq=19531, .format=AUDIO_U8, .channels=1, .samples=WAV_BUFFER_SIZE, .callback=_emu_AudioCallback };
+  SDL_AudioSpec sdlas = { .freq=44000, .format=AUDIO_U8, .channels=1, .samples=WAV_BUFFER_SIZE, .callback=_emu_AudioCallback };
   SDL_AudioDeviceID dev = SDL_OpenAudioDevice(NULL, 0, &sdlas, NULL, 0);
   SDL_PauseAudioDevice(dev, 0);
 

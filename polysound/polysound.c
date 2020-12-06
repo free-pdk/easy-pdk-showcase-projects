@@ -16,17 +16,17 @@
 unsigned char _sdcc_external_startup(void)
 {
   EASY_PDK_INIT_SYSCLOCK_8MHZ();                                   //use 8MHz sysclock
-  EASY_PDK_CALIBRATE_IHRC(10000000,5000);                          //tune SYSCLK to 10MHz (overclock) @5.00V
+  EASY_PDK_CALIBRATE_IHRC(11264000,5000);                          //tune SYSCLK to 11.264MHz (overclock) @5.00V
 
   //// PWM setup
   PWM_PORTC |= (1<<PWM_PIN);                                       //PWM output pin
   TM2C = TM2C_CLK_IHRC | TM2C_OUT_PA3 | TM2C_MODE_PWM;             //PWM clock and output mode
-  TM2S = TM2S_PWM_RES_8BIT | TM2S_PRESCALE_NONE | TM2S_SCALE_NONE; //PWM speed IHRC(20MHz) /1 /1 /256(8bit) = 78125 Hz
+  TM2S = TM2S_PWM_RES_8BIT | TM2S_PRESCALE_NONE | TM2S_SCALE_DIV2; //PWM speed IHRC(22.5MHz) /1 /2 /256(8bit) = 44000 Hz
   TM2B = 0x80;                                                     //PWM output silence (50%)
 
   //// TIMER setup
   TM3C = TM3C_CLK_IHRC;
-  TM3S = TM3S_PRESCALE_DIV64 | TM3S_SCALE_DIV16;                   //IHRC(20MHz) / 64 / 16 = 19530 Hz
+  TM3S = TM3S_PRESCALE_DIV64 | TM3S_SCALE_DIV8;                    //IHRC(22.5MHz) / 64 / 8 = 44000 Hz
   TM3B = 0xFF;                                                     //upper bound max
 
   return 0;                                                        //perform normal initialization
@@ -111,14 +111,14 @@ int main(void)
     // where 720 Hz is the desired playback tick rate
     // and 76.2939 Hz is the interval between TMR0
     // wrapping back to 0 (which comes from 20e6/4/256/256).
-    enum { TIMING_NOMINATOR = 151 };
+    enum { TIMING_NOMINATOR = 67 };
 
     // This constant controls the pitch of the melody.
     // It is calculated with 121.6796875 / 19531.25
     // where 19531.25 Hz is the interval between TMR0 increments
     // (which on the PIC16F628A comes from 20e6/4/256),
     // and 121.6796875 happens to be some finetuning.
-    #define FREQ_SCALE 0.00623
+    #define FREQ_SCALE 0.002765
 
     // Amplitudes. Chosen carefully in such manner that the sample never clips.
     enum { SQUARE0 = 3, SQUARE1 = 13, TRIVOLUME = 12, NOISE0 = 8, NOISE1 = 13, OFFSET = 0x66 };

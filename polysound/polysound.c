@@ -364,7 +364,7 @@ int main(void)
                     uint16_t period = 0;
                     if(note)
                     {
-                        static const uint16_t RateTable[24] =
+                        static const uint8_t RateTable[24] =
                         {
                             // These constants are 65535 * 2^(n/12)/ with
                             // -11<=n<=0, representing the equal temperament

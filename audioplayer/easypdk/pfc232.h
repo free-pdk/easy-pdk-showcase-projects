@@ -1,11 +1,11 @@
-#ifndef __PFS154_H__
-#define __PFS154_H__
+#ifndef __PFC232_H__
+#define __PFC232_H__
 
-#ifndef PFS154
-#define PFS154
+#ifndef PFC232
+#define PFC232
 #endif
 #if !defined __SDCC_pdk14
-#error "PFS154 needs PDK14 backend. Compile with -mpdk14"
+#error "PFC232 needs PDK14 backend. Compile with -mpdk14"
 #endif
 
 #include "pdkcommon.h"
@@ -13,25 +13,27 @@
 //fuse definitions
 #define FUSE_SECURITY_ON   0x0000 //(S)
 #define FUSE_SECURITY_OFF  0x0001
+#define FUSE_EMI_ENABLE    0x0000 //(E)
+#define FUSE_EMI_DISABLE   0x0040
 #define FUSE_IO_DRV_LOW    0x0000 //(D)
-#define FUSE_IO_DRV_NORMAL 0x0100
-#define FUSE_BOOTUP_SLOW   0x0000 //(B)
-#define FUSE_BOOTUP_FAST   0x0C00
-#define FUSE_RES_BITS_HIGH 0x30FC // - - 1 1   B B 0 D   1 1 1 1   1 1 0 S
-// Blank IC Values         0x3FFD // - - 1 1   1 1 1 1   1 1 1 1   1 1 1 1 (Security Off, Normal IO Drive, Fast Boot-up)
+#define FUSE_IO_DRV_NORMAL 0x0080
+#define FUSE_FPPA_1CORE    0x0000 //(F) - Looks like this setting is ignored. Maybe it is used in wakeup after STOPSYS
+#define FUSE_FPPA_2CORE    0x1000
+#define FUSE_RES_BITS_HIGH 0x213C // - - 1 F   0 0 0 1   D E 1 1   1 1 0 S
+// Blank IC Values         0x3FFF // - - 1 1   1 1 1 1   1 1 1 1   1 1 1 1 (Security Off, EMI Disable, Normal IO Drive, 2 Core mode)
 #define EASY_PDK_FUSE(f) { __asm__(".area FUSE (ABS)\n.org (0x7ff*2)\n.word ("_ASMD(FUSE_RES_BITS_HIGH)"|"_ASMD(f)")\n.area CODE\n"); }
 
 //set calibration macros
 #define EASY_PDK_CALIBRATE_IHRC(frequency,millivolt) EASY_PDK_CALIBRATE_RC_M( EASY_PDK_CALTYPE_IHRC, 0x0B, frequency, millivolt )
-#define EASY_PDK_CALIBRATE_ILRC(frequency,millivolt) EASY_PDK_CALIBRATE_RC_M( EASY_PDK_CALTYPE_ILRC, 0x39, frequency, millivolt )
-#define EASY_PDK_CALIBRATE_BG()                      EASY_PDK_CALIBRATE_BG_M( 0x1A, 0x18, 0x19 )
+#define EASY_PDK_CALIBRATE_ILRC(frequency,millivolt) EASY_PDK_CALIBRATE_RC_M( EASY_PDK_CALTYPE_ILRC, 0x3B, frequency, millivolt )
+#define EASY_PDK_CALIBRATE_BG()                      EASY_PDK_CALIBRATE_BG_M( 0x3C, 0x18, 0x19 )
 #define EASY_PDK_USE_FACTORY_IHRCR_16MHZ()           { __asm__("call #0x7ed\n mov "_ASMV(IHRCR)",a\n"); }
 #define EASY_PDK_USE_FACTORY_BGTR()                  { __asm__("call #0x7ee\n mov "_ASMV(BGTR)",a\n"); }
 
-#define ILRC_FREQ  55000
+#define ILRC_FREQ  40500
 
 #define EASY_PDK_INIT_SYSCLOCK_16MHZ()      {_misclvr=MISCLVR_4V;_clkmd=CLKMD_ENABLE_ILRC|CLKMD_ENABLE_IHRC|CLKMD_IHRC;}
-#define EASY_PDK_INIT_SYSCLOCK_8MHZ()       {_misclvr=MISCLVR_3V5;_clkmd=CLKMD_ENABLE_ILRC|CLKMD_ENABLE_IHRC|CLKMD_IHRC_DIV2;}
+#define EASY_PDK_INIT_SYSCLOCK_8MHZ()       {_misclvr=MISCLVR_3V75;_clkmd=CLKMD_ENABLE_ILRC|CLKMD_ENABLE_IHRC|CLKMD_IHRC_DIV2;}
 #define EASY_PDK_INIT_SYSCLOCK_4MHZ()       {_misclvr=MISCLVR_2V5;_clkmd=CLKMD_ENABLE_ILRC|CLKMD_ENABLE_IHRC|CLKMD_IHRC_DIV4;}
 #define EASY_PDK_INIT_SYSCLOCK_2MHZ()       {_misclvr=MISCLVR_2V;_clkmd=CLKMD_ENABLE_ILRC|CLKMD_ENABLE_IHRC|CLKMD_IHRC_DIV8;}
 #define EASY_PDK_INIT_SYSCLOCK_1MHZ()       {_clkmd=CLKMD_ENABLE_ILRC|CLKMD_ENABLE_IHRC|CLKMD_IHRC_DIV16;}
@@ -42,14 +44,15 @@
 
 //IO register definitions
 __sfr __at(0x00) _flag;
-//0x01
+__sfr __at(0x01) _fppen;
 __sfr __at(0x02) _sp;
 __sfr __at(0x03) _clkmd;
 __sfr __at(0x04) _inten;
 __sfr __at(0x05) _intrq;
 __sfr __at(0x06) _t16m;
-//0x07
-__sfr __at(0x08) _misc;
+__sfr __at(0x07) _opaofs;
+__sfr __at(0x08) _mulop;
+__sfr __at(0x09) _mulrh;
 __sfr __at(0x09) _tm2b;
 __sfr __at(0x0a) _eoscr;
 __sfr __at(0x0b) _ihrcr;
@@ -60,19 +63,19 @@ __sfr __at(0x0f) _misc2;
 __sfr __at(0x10) _pa;
 __sfr __at(0x11) _pac;
 __sfr __at(0x12) _paph;
-//0x13
+__sfr __at(0x13) _papl;
 __sfr __at(0x14) _pb;
 __sfr __at(0x15) _pbc;
 __sfr __at(0x16) _pbph;
-__sfr __at(0x17) _tm2s;
+__sfr __at(0x17) _pbpl;
 __sfr __at(0x18) _gpcc;
 __sfr __at(0x19) _gpcs;
-__sfr __at(0x1a) _bgtr;
+__sfr __at(0x1a) _opac;
 __sfr __at(0x1b) _misclvr;
 __sfr __at(0x1c) _tm2c;
 __sfr __at(0x1d) _tm2ct;
-//0x1e
-//0x1f
+__sfr __at(0x1e) _tm2s;
+__sfr __at(0x1f) _misc;
 __sfr __at(0x20) _pwmg0c;
 __sfr __at(0x21) _pwmg0s;
 __sfr __at(0x22) _pwmg0dth;
@@ -94,15 +97,17 @@ __sfr __at(0x31) _pwmg2cubl;
 __sfr __at(0x32) _tm3c;
 __sfr __at(0x33) _tm3ct;
 __sfr __at(0x34) _tm3s;
-__sfr __at(0x35) _tm3b;
-__sfr __at(0x36) _rfcc;
-__sfr __at(0x37) _rfccrh;
-__sfr __at(0x38) _rfccrl;
-__sfr __at(0x39) _ilrcr;
-//0x3a
-//0x3b
-//0x3c
-//0x3d
+__sfr __at(0x35) _adcc;
+__sfr __at(0x36) _adcm;
+__sfr __at(0x37) _adcrh;
+__sfr __at(0x37) _adcopr;
+__sfr __at(0x38) _adcrl;
+__sfr __at(0x38) _tm3b;
+__sfr __at(0x39) _adcrgc;
+__sfr __at(0x3a) _adcbgtr;
+__sfr __at(0x3b) _ilrcr;
+__sfr __at(0x3c) _bgtr;
+__sfr __at(0x3d) _rop;
 //0x3e
 //0x3f
 
@@ -110,12 +115,15 @@ __sfr __at(0x39) _ilrcr;
 __sfr16          _t16c;
 
 #define SP        _sp
+#define FPPEN     _fppen
 #define FLAG      _flag
 #define CLKMD     _clkmd
 #define INTEN     _inten
 #define INTRQ     _intrq
 #define T16M      _t16m
-#define MISC      _misc
+#define OPAOFS    _opaofs
+#define MULOP     _mulop
+#define MULRH     _mulrh
 #define TM2B      _tm2b
 #define EOSCR     _eoscr
 #define IHRCR     _ihrcr
@@ -126,16 +134,18 @@ __sfr16          _t16c;
 #define PA        _pa
 #define PAC       _pac
 #define PAPH      _paph
+#define PAPL      _papl
 #define PB        _pb
 #define PBC       _pbc
 #define PBPH      _pbph
-#define TM2S      _tm2s
+#define PBPL      _pbpl
 #define GPCC      _gpcc
 #define GPCS      _gpcs
-#define BGTR      _bgtr
 #define MISCLVR   _misclvr
 #define TM2C      _tm2c
 #define TM2CT     _tm2ct
+#define TM2S      _tm2s
+#define MISC      _misc
 #define PWMG0C    _pwmg0c
 #define PWMG0S    _pwmg0s
 #define PWMG0DTH  _pwmg0dth
@@ -157,11 +167,17 @@ __sfr16          _t16c;
 #define TM3C      _tm3c
 #define TM3CT     _tm3ct
 #define TM3S      _tm3s
+#define ADCC      _adcc
+#define ADCM      _adcm
+#define ADCRH     _adcrh
+#define ADCOPR    _adcopr
+#define ADCRL     _adcrl
 #define TM3B      _tm3b
-#define RFCC      _rfcc
-#define RFCCRH    _rfccrh
-#define RFCCRL    _rfccrl
+#define ADCRGC    _adcrgc
+#define ADCBGTR   _adcbgtr
 #define ILRCR     _ilrcr
+#define BGTR      _bgtr
+#define ROP       _rop
 #define T16C      _t16c
 
 //flag definitions
@@ -169,6 +185,10 @@ __sfr16          _t16c;
 #define FLAG_CF 0x02
 #define FLAG_AC 0x04
 #define FLAG_OV 0x08
+
+//fppen definitions
+#define FPPEN_ENABLE_FPPA0           0x01
+#define FPPEN_ENABLE_FPPA1           0x02
 
 //clkmd definitions
 #define CLKMD_ENABLE_PA5RST          0x01
@@ -194,6 +214,7 @@ __sfr16          _t16c;
 #define INTEN_PA0                    0x01
 #define INTEN_PB0                    0x02
 #define INTEN_T16                    0x04
+#define INTEN_ADC                    0x08
 #define INTEN_COMP                   0x10
 #define INTEN_PWMG                   0x20
 #define INTEN_TM2                    0x40
@@ -203,6 +224,7 @@ __sfr16          _t16c;
 #define INTRQ_PA0                    0x01
 #define INTRQ_PB0                    0x02
 #define INTRQ_T16                    0x04
+#define INTRQ_ADC                    0x08
 #define INTRQ_COMP                   0x10
 #define INTRQ_PWMG                   0x20
 #define INTRQ_TM2                    0x40
@@ -271,9 +293,11 @@ __sfr16          _t16c;
 #define MISC_WATCHDOG_256K_ILRC      0x03
 #define MISC_LVR_DISABLE             0x04
 #define MISC_LCD_ENABLE              0x10
-#define MISC_FAST_WAKEUP_ENABLE      0x20
+#define MISC_FASTWAKEUP_ENABLE       0x20
 
 //misc2 definitions
+#define MISC2_GPC_PA4                0x00
+#define MISC2_GPC_PA0                0x80
 #define MISC2_COMP_EDGE_INT_BOTH     0x00
 #define MISC2_COMP_EDGE_INT_RISE     0x20
 #define MISC2_COMP_EDGE_INT_FALL     0x40
@@ -281,16 +305,32 @@ __sfr16          _t16c;
 #define MISC2_INTRQ7_PWMG2           0x10
 #define MISC2_INTRQ4_COMP            0x00
 #define MISC2_INTRQ4_PWMG1           0x08
+#define MISC2_INTRQ0_PA0             0x00
+#define MISC2_INTRQ0_PB5             0x02
+#define MISC2_INTRQ1_PB0             0x00
+#define MISC2_INTRQ1_PA4             0x01
 
 //misc_lvr definitions
-#define MISCLVR_4V                   0x00
-#define MISCLVR_3V5                  0x20
-#define MISCLVR_3V                   0x40
-#define MISCLVR_2V75                 0x60
-#define MISCLVR_2V5                  0x80
-#define MISCLVR_1V8                  0xA0
-#define MISCLVR_2V2                  0xC0
-#define MISCLVR_2V                   0xE0
+#define MISCLVR_1V8                  0x00
+#define MISCLVR_1V9                  0x10
+#define MISCLVR_2V                   0x20
+#define MISCLVR_2V1                  0x30
+#define MISCLVR_2V2                  0x40
+#define MISCLVR_2V3                  0x50
+#define MISCLVR_2V4                  0x60
+#define MISCLVR_2V5                  0x70
+#define MISCLVR_2V7                  0x80
+#define MISCLVR_3V                   0x90
+#define MISCLVR_3V15                 0xA0
+#define MISCLVR_3V3                  0xB0
+#define MISCLVR_3V5                  0xC0
+#define MISCLVR_3V75                 0xD0
+#define MISCLVR_4V                   0xE0
+#define MISCLVR_5V                   0xF0
+#define MISCLVR_BGON                 0x00
+#define MISCLVR_BG_DIV4              0x01
+#define MISCLVR_BG_DIV32             0x02
+#define MISCLVR_BG_AUTO              0x03
 
 //tm2c definitions
 #define TM2C_CLK_DISABLE             0x00
@@ -423,6 +463,7 @@ __sfr16          _t16c;
 #define GPCC_COMP_MINUS_VINT_R       0x06
 #define GPCC_COMP_MINUS_PB6          0x08
 #define GPCC_COMP_MINUS_PB7          0x0A
+#define GPCC_COMP_MINUS_PA0          0x0C
 #define GPCC_COMP_OUT_INVERT         0x10
 #define GPCC_COMP_OUT_TO_TM2CLK      0x20
 #define GPCC_COMP_RESULT_NEGATIV     0x00
@@ -436,24 +477,6 @@ __sfr16          _t16c;
 #define GPCS_COMP_CASE4              0x30
 #define GPCS_COMP_WAKEUP_ENABLE      0x40
 #define GPCS_COMP_OUTPUT_PA0         0x80
-
-//rfcc definitions
-#define RFCC_ENABLE                  0x10
-#define RFCC_MODE_R_TYPE             0x00
-#define RFCC_MODE_C_TYPE             0x08
-#define RFCC_OVERFLOW                0x04
-#define RFCC_OUTPUT_ENABLE           0x02
-#define RFCC_CH_NONE                 0xE0
-#define RFCC_CH_RFC0_PA4             0x00
-#define RFCC_CH_RFC1_PA0             0x20
-#define RFCC_CH_RFC2_PA3             0x80
-#define RFCC_CH_RFC3_PB7             0xA0
-#define RFCC_CH_RFC4_PB6             0xC0
-#define RFCC_CH_RFC5_PB4             0x01
-#define RFCC_CH_RFC6_PB3             0x21
-#define RFCC_CH_RFC7_PB2             0x41
-#define RFCC_CH_RFC8_PB1             0x61
-#define RFCC_CH_RFC9_PB0             0x81
 
 //pwmg0c definitions
 #define PWMG0C_ENABLE                0x80
@@ -612,4 +635,100 @@ __sfr16          _t16c;
 #define PWMG2_SCALE_DIV31            0x1E
 #define PWMG2_SCALE_DIV32            0x1F
 
-#endif //__PFS154_H__
+//rop definitions
+#define ROP_PURE_OPA                 0x00
+#define ROP_OPA_PWM                  0x08
+#define ROP_TMX_6BIT                 0x00
+#define ROP_TMX_7BIT                 0x10
+#define ROP_TMX_16MHZ                0x00
+#define ROP_TMX_32MHZ                0x20
+#define ROP_PURE_PWM                 0x00
+#define ROP_GPC_PWM                  0x40
+#define ROP_PWM_16MHZ                0x00
+#define ROP_PWM_32MHZ                0x80
+
+//define opac definitions
+#define OPAC_PLUS_PA4                0x00
+#define OPAC_PLUS_VSS                0x01
+#define OPAC_PLUS_VINT_R             0x02
+#define OPAC_MINUS_PA3               0x00
+#define OPAC_MINUS_PA4               0x04
+#define OPAC_MINUS_BANDGAP           0x08
+#define OPAC_MINUS_VINT_R            0x0C
+#define OPAC_MINUS_PB6               0x10
+#define OPAC_MINUS_PB7               0x04
+#define OPAC_OUTLOW                  0x00
+#define OPAC_OUTHIGH                 0x40
+#define OPAC_STATUS                  0x40
+#define OPAC_ENABLE                  0x80
+
+//define opafs definitions
+#define OPAFS_MILIVOLT_1             0x00
+#define OPAFS_MILIVOLT_2             0x01
+#define OPAFS_MILIVOLT_5             0x02
+#define OPAFS_MILIVOLT_10            0x03
+#define OPAFS_MILIVOLT_15            0x04
+#define OPAFS_MILIVOLT_20            0x05
+#define OPAFS_MILIVOLT_25            0x06
+#define OPAFS_MILIVOLT_30            0x07
+#define OPAFS_MILIVOLT_MINUS_1       0x08
+#define OPAFS_MILIVOLT_MINUS_2       0x09
+#define OPAFS_MILIVOLT_MINUS_5       0x0A
+#define OPAFS_MILIVOLT_MINUS_10      0x0B
+#define OPAFS_MILIVOLT_MINUS_15      0x0C
+#define OPAFS_MILIVOLT_MINUS_20      0x0D
+#define OPAFS_MILIVOLT_MINUS_25      0x0E
+#define OPAFS_MILIVOLT_MINUS_30      0x0F
+
+//adcc definitions
+#define ADCC_ADC_ENABLE              0x80
+#define ADCC_ADC_CONV_START          0x40
+#define ADCC_ADC_CONV_COMPLETE       0x40
+#define ADCC_CH_AD0_PB0              0x00
+#define ADCC_CH_AD1_PB1              0x04
+#define ADCC_CH_AD2_PB2              0x08
+#define ADCC_CH_AD3_PB3              0x0C
+#define ADCC_CH_AD4_PB4              0x10
+#define ADCC_CH_AD5_PB5              0x14
+#define ADCC_CH_AD6_PB6              0x18
+#define ADCC_CH_AD7_PB7              0x1C
+#define ADCC_CH_AD8_PA3              0x20
+#define ADCC_CH_AD9_PA4              0x24
+#define ADCC_CH_AD10_PA0             0x28
+#define ADCC_CH_AD13_GND             0x34
+#define ADCC_CH_AD15_BANDGAP         0x3C
+
+//adcm definitions
+#define ADCM_CLK_SYSCLK              0x00
+#define ADCM_CLK_SYSCLK_DIV2         0x02
+#define ADCM_CLK_SYSCLK_DIV4         0x04
+#define ADCM_CLK_SYSCLK_DIV8         0x06
+#define ADCM_CLK_SYSCLK_DIV16        0x08
+#define ADCM_CLK_SYSCLK_DIV32        0x0A
+#define ADCM_CLK_SYSCLK_DIV64        0x0C
+#define ADCM_CLK_SYSCLK_DIV128       0x0E
+
+//adcopr definitions
+#define ADCOPR_ADC_MEASURE_ENABLE    0x01
+#define ADCOPR_ADC_CLK_SEL           0x02
+#define ADCOPR_ONESHOT               0x00
+#define ADCOPR_CONTINUOS             0x08
+
+//adcrgc definitions
+#define ADCRGC_CH15_BG_VREF_1V2      0x00
+#define ADCRGC_CH15_BG_VREF_2V       0x04
+#define ADCRGC_CH15_BG_VREF_3V       0x08
+#define ADCRGC_CH15_BG_VREF_4V       0x0C
+#define ADCRGC_CH15_VREF_BG          0x00
+#define ADCRGC_CH15_VREF_VDD_DIV4    0x10
+#define ADCRGC_ADC_VREF_VDD          0x00
+#define ADCRGC_ADC_VREF_2V           0x10
+#define ADCRGC_ADC_VREF_3V           0x20
+#define ADCRGC_ADC_VREF_4V           0x30
+#define ADCRGC_ADC_VREF_PB1          0x40
+#define ADCRGC_ADC_VREF_BG1V2        0x50
+
+//TODO: ADCBGTR [7:4] ADC Vref trim [3:0] ADC band gap trim
+//TODO: ILRCR [7:4] ILRC trim [3:0] ADC offset trim
+
+#endif //__PFC232_H__

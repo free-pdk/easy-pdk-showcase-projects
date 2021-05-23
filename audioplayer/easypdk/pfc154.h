@@ -1,11 +1,11 @@
-#ifndef __PFS173_H__
-#define __PFS173_H__
+#ifndef __PFC154_H__
+#define __PFC154_H__
 
-#ifndef PFS173
-#define PFS173
+#ifndef PFC154
+#define PFC154
 #endif
-#if !defined __SDCC_pdk15
-#error "PFS173 needs PDK15 backend. Compile with -mpdk15"
+#if !defined __SDCC_pdk14
+#error "PFC154 needs PDK14 backend. Compile with -mpdk14"
 #endif
 
 #include "pdkcommon.h"
@@ -13,27 +13,27 @@
 //fuse definitions
 #define FUSE_SECURITY_ON   0x0000 //(S)
 #define FUSE_SECURITY_OFF  0x0001
-#define FUSE_PB4PB5_NORMAL 0x0000 //(D)
-#define FUSE_PB4PB5_STRONG 0x0100
-#define FUSE_BOOTUP_SLOW   0x0000 //(B)
-#define FUSE_BOOTUP_FAST   0x1800
-#define FUSE_RES_BITS_HIGH 0x62FC // - 1 1 B   B 0 1 D   1 1 1 1   1 1 0 S
-// Blank IC Values         0x7FFF // - 1 1 1   1 1 1 1   1 1 1 1   1 1 1 1 (Security Off, PB4/PB5 Strong IO Drive, Fast Boot-up)
-#define EASY_PDK_FUSE(f) { __asm__(".area FUSE (ABS)\n.org (0xbff*2)\n.word ("_ASMD(FUSE_RES_BITS_HIGH)"|"_ASMD(f)")\n.area CODE\n"); }
+#define FUSE_EMI_ENABLE    0x0000 //(E)
+#define FUSE_EMI_DISABLE   0x0080
+#define FUSE_IO_DRV_LOW    0x0000 //(D)
+#define FUSE_IO_DRV_NORMAL 0x0100
+#define FUSE_RES_BITS_HIGH 0x0036 // - - 0 0   0 0 0 D   E 0 1 1   0 1 1 S
+// Blank IC Values         0x3FFF // - - 1 1   1 1 1 1   1 1 1 1   1 1 1 1 (Security Off, EMI Disable, Normal IO Drive)
+#define EASY_PDK_FUSE(f) { __asm__(".area FUSE (ABS)\n.org (0x7ff*2)\n.word ("_ASMD(FUSE_RES_BITS_HIGH)"|"_ASMD(f)")\n.area CODE\n"); }
 
 //set calibration macros
 #define EASY_PDK_CALIBRATE_IHRC(frequency,millivolt) EASY_PDK_CALIBRATE_RC_M( EASY_PDK_CALTYPE_IHRC, 0x0B, frequency, millivolt )
-#define EASY_PDK_CALIBRATE_ILRC(frequency,millivolt) EASY_PDK_CALIBRATE_RC_M( EASY_PDK_CALTYPE_ILRC, 0x62, frequency, millivolt )
-#define EASY_PDK_CALIBRATE_BG()                      EASY_PDK_CALIBRATE_BG_M( 0x63, 0x2B, 0x2C )
-#define EASY_PDK_USE_FACTORY_IHRCR_16MHZ()           { __asm__("call #0xbed\n mov "_ASMV(IHRCR)",a\n"); }
-#define EASY_PDK_USE_FACTORY_BGTR()                  { __asm__("call #0xbee\n mov "_ASMV(BGTR)",a\n"); }
+#define EASY_PDK_CALIBRATE_ILRC(frequency,millivolt) EASY_PDK_CALIBRATE_RC_M( EASY_PDK_CALTYPE_ILRC, 0x39, frequency, millivolt )
+#define EASY_PDK_CALIBRATE_BG()                      EASY_PDK_CALIBRATE_BG_M( 0x1A, 0x18, 0x19 )
+#define EASY_PDK_USE_FACTORY_IHRCR_16MHZ()           { __asm__("call #0x7ed\n mov "_ASMV(IHRCR)",a\n"); }
+#define EASY_PDK_USE_FACTORY_BGTR()                  { __asm__("call #0x7ee\n mov "_ASMV(BGTR)",a\n"); }
 
-#define ILRC_FREQ  95000
+#define ILRC_FREQ  55000
 
-#define EASY_PDK_INIT_SYSCLOCK_16MHZ()      {_misclvr=MISCLVR_4V5;_clkmd=CLKMD_ENABLE_ILRC|CLKMD_ENABLE_IHRC|CLKMD_IHRC;}
+#define EASY_PDK_INIT_SYSCLOCK_16MHZ()      {_misclvr=MISCLVR_4V;_clkmd=CLKMD_ENABLE_ILRC|CLKMD_ENABLE_IHRC|CLKMD_IHRC;}
 #define EASY_PDK_INIT_SYSCLOCK_8MHZ()       {_misclvr=MISCLVR_3V5;_clkmd=CLKMD_ENABLE_ILRC|CLKMD_ENABLE_IHRC|CLKMD_IHRC_DIV2;}
 #define EASY_PDK_INIT_SYSCLOCK_4MHZ()       {_misclvr=MISCLVR_2V5;_clkmd=CLKMD_ENABLE_ILRC|CLKMD_ENABLE_IHRC|CLKMD_IHRC_DIV4;}
-#define EASY_PDK_INIT_SYSCLOCK_2MHZ()       {_misclvr=MISCLVR_2V2;_clkmd=CLKMD_ENABLE_ILRC|CLKMD_ENABLE_IHRC|CLKMD_IHRC_DIV8;}
+#define EASY_PDK_INIT_SYSCLOCK_2MHZ()       {_misclvr=MISCLVR_2V;_clkmd=CLKMD_ENABLE_ILRC|CLKMD_ENABLE_IHRC|CLKMD_IHRC_DIV8;}
 #define EASY_PDK_INIT_SYSCLOCK_1MHZ()       {_clkmd=CLKMD_ENABLE_ILRC|CLKMD_ENABLE_IHRC|CLKMD_IHRC_DIV16;}
 #define EASY_PDK_INIT_SYSCLOCK_500KHZ()     {_clkmd=CLKMD_ENABLE_ILRC|CLKMD_ENABLE_IHRC|CLKMD_IHRC_DIV32;}
 #define EASY_PDK_INIT_SYSCLOCK_ILRC()       {_clkmd=CLKMD_ENABLE_ILRC|CLKMD_ENABLE_IHRC|CLKMD_ILRC;}
@@ -49,85 +49,62 @@ __sfr __at(0x04) _inten;
 __sfr __at(0x05) _intrq;
 __sfr __at(0x06) _t16m;
 //0x07
-//0x08
-//0x09
+__sfr __at(0x08) _misc;
+__sfr __at(0x09) _tm2b;
 __sfr __at(0x0a) _eoscr;
 __sfr __at(0x0b) _ihrcr;
 __sfr __at(0x0c) _integs;
 __sfr __at(0x0d) _padier;
 __sfr __at(0x0e) _pbdier;
-__sfr __at(0x0f) _pcdier;
+__sfr __at(0x0f) _misc2;
 __sfr __at(0x10) _pa;
 __sfr __at(0x11) _pac;
 __sfr __at(0x12) _paph;
-__sfr __at(0x13) _pb;
-__sfr __at(0x14) _pbc;
-__sfr __at(0x15) _pbph;
-__sfr __at(0x16) _pc;
-__sfr __at(0x17) _pcc;
-__sfr __at(0x18) _pcph;
-__sfr __at(0x19) _pbpl;
-__sfr __at(0x1a) _pcpl;
-//0x1b
-//0x1c
-//0x1d
+//0x13
+__sfr __at(0x14) _pb;
+__sfr __at(0x15) _pbc;
+__sfr __at(0x16) _pbph;
+__sfr __at(0x17) _tm2s;
+__sfr __at(0x18) _gpcc;
+__sfr __at(0x19) _gpcs;
+__sfr __at(0x1a) _bgtr;
+__sfr __at(0x1b) _misclvr;
+__sfr __at(0x1c) _tm2c;
+__sfr __at(0x1d) _tm2ct;
 //0x1e
 //0x1f
-__sfr __at(0x20) _adcc;
-__sfr __at(0x21) _adcm;
-__sfr __at(0x22) _adcr;
-//0x23
-__sfr __at(0x24) _adcrgc;
-//0x25
-__sfr __at(0x26) _misc;
-__sfr __at(0x27) _misc2;
-__sfr __at(0x28) _misclvr;
-//0x2a
-__sfr __at(0x2b) _gpcc;
-__sfr __at(0x2c) _gpcs;
-__sfr __at(0x2d) _rfcc;
-__sfr __at(0x2e) _rfccrh;
-__sfr __at(0x2f) _rfccrl;
-__sfr __at(0x30) _tm2c;
-__sfr __at(0x31) _tm2ct;
-__sfr __at(0x32) _tm2s;
-__sfr __at(0x33) _tm2b;
-__sfr __at(0x34) _tm3c;
-__sfr __at(0x35) _tm3ct;
-__sfr __at(0x36) _tm3s;
-__sfr __at(0x37) _tm3b;
-//0x38
-//0x3a
+__sfr __at(0x20) _pwmg0c;
+__sfr __at(0x21) _pwmg0s;
+__sfr __at(0x22) _pwmg0dth;
+__sfr __at(0x23) _pwmg0dtl;
+__sfr __at(0x24) _pwmg0cubh;
+__sfr __at(0x25) _pwmg0cubl;
+__sfr __at(0x26) _pwmg1c;
+__sfr __at(0x27) _pwmg1s;
+__sfr __at(0x28) _pwmg1dth;
+__sfr __at(0x29) _pwmg1dtl;
+__sfr __at(0x2a) _pwmg1cubh;
+__sfr __at(0x2b) _pwmg1cubl;
+__sfr __at(0x2c) _pwmg2c;
+__sfr __at(0x2d) _pwmg2s;
+__sfr __at(0x2e) _pwmg2dth;
+__sfr __at(0x2f) _pwmg2dtl;
+__sfr __at(0x30) _pwmg2cubh;
+__sfr __at(0x31) _pwmg2cubl;
+__sfr __at(0x32) _tm3c;
+__sfr __at(0x33) _tm3ct;
+__sfr __at(0x34) _tm3s;
+__sfr __at(0x35) _tm3b;
+__sfr __at(0x36) _rfcc;
+__sfr __at(0x37) _rfccrh;
+__sfr __at(0x38) _rfccrl;
+__sfr __at(0x39) _ilrcr;
+__sfr __at(0x3a) _rop;
 //0x3b
 //0x3c
 //0x3d
 //0x3e
 //0x3f
-__sfr __at(0x40) _pwmg0c;
-__sfr __at(0x41) _pwmgclk;
-__sfr __at(0x42) _pwmg0dth;
-__sfr __at(0x43) _pwmg0dtl;
-__sfr __at(0x44) _pwmgcubh;
-__sfr __at(0x45) _pwmgcubl;
-__sfr __at(0x46) _pwmg1c;
-//0x47
-__sfr __at(0x48) _pwmg1dth;
-__sfr __at(0x49) _pwmg1dtl;
-//0x4a
-//0x4b
-__sfr __at(0x4c) _pwmg2c;
-//0x4d
-__sfr __at(0x4e) _pwmg2dth;
-__sfr __at(0x4f) _pwmg2dtl;
-//0x50
-//..
-//0x61
-__sfr __at(0x62) _ilrcr;
-__sfr __at(0x63) _bgtr;
-//0x64
-//0x65
-//0x66
-__sfr __at(0x67) _rop;
 
 //T16C register
 __sfr16          _t16c;
@@ -138,57 +115,53 @@ __sfr16          _t16c;
 #define INTEN     _inten
 #define INTRQ     _intrq
 #define T16M      _t16m
+#define MISC      _misc
+#define TM2B      _tm2b
 #define EOSCR     _eoscr
 #define IHRCR     _ihrcr
 #define INTEGS    _integs
 #define PADIER    _padier
 #define PBDIER    _pbdier
-#define PCDIER    _pcdier
+#define MISC2     _misc2
 #define PA        _pa
 #define PAC       _pac
 #define PAPH      _paph
 #define PB        _pb
 #define PBC       _pbc
 #define PBPH      _pbph
-#define PC        _pc
-#define PCC       _pcc
-#define PCPH      _pcph
-#define PBPL      _pbpl
-#define PCPL      _pcpl
-#define ADCC      _adcc
-#define ADCM      _adcm
-#define ADCR      _adcr
-#define ADCRGC    _adcrgc
-#define MISC      _misc
-#define MISC2     _misc2
-#define MISCLVR   _misclvr
+#define TM2S      _tm2s
 #define GPCC      _gpcc
 #define GPCS      _gpcs
-#define RFCC      _rfcc
-#define RFCCRH    _rfccrh
-#define RFCCRL    _rfccrl
+#define BGTR      _bgtr
+#define MISCLVR   _misclvr
 #define TM2C      _tm2c
 #define TM2CT     _tm2ct
-#define TM2S      _tm2s
-#define TM2B      _tm2b
+#define PWMG0C    _pwmg0c
+#define PWMG0S    _pwmg0s
+#define PWMG0DTH  _pwmg0dth
+#define PWMG0DTL  _pwmg0dtl
+#define PWMG0CUBH _pwmg0cubh
+#define PWMG0CUBL _pwmg0cubl
+#define PWMG1C    _pwmg1c
+#define PWMG1S    _pwmg1s
+#define PWMG1DTH  _pwmg1dth
+#define PWMG1DTL  _pwmg1dtl
+#define PWMG1CUBH _pwmg1cubh
+#define PWMG1CUBL _pwmg1cubl
+#define PWMG2C    _pwmg2c
+#define PWMG2S    _pwmg2s
+#define PWMG2DTH  _pwmg2dth
+#define PWMG2DTL  _pwmg2dtl
+#define PWMG2CUBH _pwmg2cubh
+#define PWMG2CUBL _pwmg2cubl
 #define TM3C      _tm3c
 #define TM3CT     _tm3ct
 #define TM3S      _tm3s
 #define TM3B      _tm3b
-#define PWMG0C    _pwmg0c
-#define PWMGCLK   _pwmgclk
-#define PWMG0DTH  _pwmg0dth
-#define PWMG0DTL  _pwmg0dtl
-#define PWMGCUBH  _pwmgcubh
-#define PWMGCUBL  _pwmgcubl
-#define PWMG1C    _pwmg1c
-#define PWMG1DTH  _pwmg1dth
-#define PWMG1DTL  _pwmg1dtl
-#define PWMG2C    _pwmg2c
-#define PWMG2DTH  _pwmg2dth
-#define PWMG2DTL  _pwmg2dtl
+#define RFCC      _rfcc
+#define RFCCRH    _rfccrh
+#define RFCCRL    _rfccrl
 #define ILRCR     _ilrcr
-#define BGTR      _bgtr
 #define ROP       _rop
 #define T16C      _t16c
 
@@ -220,11 +193,8 @@ __sfr16          _t16c;
 
 //interrupt enable definitions
 #define INTEN_PA0                    0x01
-#define INTEN_PB5                    0x01
 #define INTEN_PB0                    0x02
-#define INTEN_PA4                    0x02
 #define INTEN_T16                    0x04
-#define INTEN_ADC                    0x08
 #define INTEN_COMP                   0x10
 #define INTEN_PWMG                   0x20
 #define INTEN_TM2                    0x40
@@ -232,11 +202,8 @@ __sfr16          _t16c;
 
 //interrupt request definitions
 #define INTRQ_PA0                    0x01
-#define INTRQ_PB5                    0x01
 #define INTRQ_PB0                    0x02
-#define INTRQ_PA4                    0x02
 #define INTRQ_T16                    0x04
-#define INTRQ_ADC                    0x08
 #define INTRQ_COMP                   0x10
 #define INTRQ_PWMG                   0x20
 #define INTRQ_TM2                    0x40
@@ -274,15 +241,9 @@ __sfr16          _t16c;
 #define INTEGS_PA0_BOTH              0x00
 #define INTEGS_PA0_RISING            0x01
 #define INTEGS_PA0_FALLING           0x02
-#define INTEGS_PB5_BOTH              0x00
-#define INTEGS_PB5_RISING            0x01
-#define INTEGS_PB5_FALLING           0x02
 #define INTEGS_PB0_BOTH              0x00
 #define INTEGS_PB0_RISING            0x04
 #define INTEGS_PB0_FALLING           0x08
-#define INTEGS_PA4_BOTH              0x00
-#define INTEGS_PA4_RISING            0x04
-#define INTEGS_PA4_FALLING           0x08
 #define INTEGS_T16_RISING            0x00
 #define INTEGS_T16_FALLING           0x10
 
@@ -304,45 +265,6 @@ __sfr16          _t16c;
 #define PBDIE_PB6_WAKEUP_ENABLE      0x40
 #define PBDIE_PB7_WAKEUP_ENABLE      0x80
 
-//pcdie definitions
-#define PCDIE_PC0_WAKEUP_ENABLE      0x01
-#define PCDIE_PC1_WAKEUP_ENABLE      0x02
-#define PCDIE_PC2_WAKEUP_ENABLE      0x04
-#define PCDIE_PC3_WAKEUP_ENABLE      0x08
-
-//adcc definitions
-#define ADCC_ADC_ENABLE              0x80
-#define ADCC_ADC_CONV_START          0x40
-#define ADCC_ADC_CONV_COMPLETE       0x40
-#define ADCC_CH_AD0_PB0              0x00
-#define ADCC_CH_AD1_PB1              0x04
-#define ADCC_CH_AD2_PB2              0x08
-#define ADCC_CH_AD3_PB3              0x0C
-#define ADCC_CH_AD4_PB4              0x10
-#define ADCC_CH_AD5_PB5              0x14
-#define ADCC_CH_AD6_PB6              0x18
-#define ADCC_CH_AD7_PB7              0x1C
-#define ADCC_CH_AD8_PA3              0x20
-#define ADCC_CH_AD9_PA4              0x24
-#define ADCC_CH_AD10_PA0             0x28
-#define ADCC_CH_AD11_PC1             0x2C
-#define ADCC_CH_AD12_PC2             0x30
-#define ADCC_CH_AD15_BANDGAP         0x3C
-
-//adcm definitions
-#define ADCM_CLK_SYSCLK              0x00
-#define ADCM_CLK_SYSCLK_DIV2         0x02
-#define ADCM_CLK_SYSCLK_DIV4         0x04
-#define ADCM_CLK_SYSCLK_DIV8         0x06
-#define ADCM_CLK_SYSCLK_DIV16        0x08
-#define ADCM_CLK_SYSCLK_DIV32        0x0A
-#define ADCM_CLK_SYSCLK_DIV64        0x0C
-#define ADCM_CLK_SYSCLK_DIV128       0x0E
-
-//adcrgc definitions
-#define ADCRG_ADC_REF_VDD            0x00
-#define ADCRG_ADC_REF_PB1            0x80
-
 //misc definitions
 #define MISC_WATCHDOG_8K_ILRC        0x00
 #define MISC_WATCHDOG_16K_ILRC       0x01
@@ -350,14 +272,15 @@ __sfr16          _t16c;
 #define MISC_WATCHDOG_256K_ILRC      0x03
 #define MISC_LVR_DISABLE             0x04
 #define MISC_LCD_ENABLE              0x10
-#define MISC_FAST_WAKEUP_ENABLE      0x20
-#define MISC_EC_DRIVE_HIGH           0x00
-#define MISC_EC_DRIVE_LOW            0x40
 
 //misc2 definitions
 #define MISC2_COMP_EDGE_INT_BOTH     0x00
 #define MISC2_COMP_EDGE_INT_RISE     0x20
 #define MISC2_COMP_EDGE_INT_FALL     0x40
+#define MISC2_INTRQ7_TM3             0x00
+#define MISC2_INTRQ7_PWMG2           0x10
+#define MISC2_INTRQ4_COMP            0x00
+#define MISC2_INTRQ4_PWMG1           0x08
 
 //misc_lvr definitions
 #define MISCLVR_1V8                  0x00
@@ -375,52 +298,11 @@ __sfr16          _t16c;
 #define MISCLVR_3V5                  0xC0
 #define MISCLVR_3V75                 0xD0
 #define MISCLVR_4V                   0xE0
-#define MISCLVR_4V5                  0xF0
-#define MISCLVR_BANDGAP_ON           0x00
-#define MISCLVR_BANDGAP_DIV4         0x01
-#define MISCLVR_BANDGAP_DIV32        0x02
-#define MISCLVR_BANDGAP_AUTO         0x03
-
-//gpcc definitions
-#define GPCC_COMP_PLUS_VINT_R        0x00
-#define GPCC_COMP_PLUS_PA4           0x01
-#define GPCC_COMP_MINUS_PA3          0x00
-#define GPCC_COMP_MINUS_PA4          0x02
-#define GPCC_COMP_MINUS_BANDGAP_1V2  0x04
-#define GPCC_COMP_MINUS_VINT_R       0x06
-#define GPCC_COMP_MINUS_PB6          0x08
-#define GPCC_COMP_MINUS_PB7          0x0A
-#define GPCC_COMP_OUT_INVERT         0x10
-#define GPCC_COMP_OUT_TO_TM2CLK      0x20
-#define GPCC_COMP_RESULT_NEGATIV     0x00
-#define GPCC_COMP_RESULT_POSITIV     0x40
-#define GPCC_COMP_ENABLE             0x80
-
-//gpcs definitions
-#define GPCS_COMP_CASE1              0x00
-#define GPCS_COMP_CASE2              0x10
-#define GPCS_COMP_CASE3              0x20
-#define GPCS_COMP_CASE4              0x30
-#define GPCS_COMP_WAKEUP_ENABLE      0x40
-#define GPCS_COMP_OUTPUT_PA0         0x80
-
-//rfcc definitions
-#define RFCC_ENABLE                  0x10
-#define RFCC_MODE_R_TYPE             0x00
-#define RFCC_MODE_C_TYPE             0x08
-#define RFCC_OVERFLOW                0x04
-#define RFCC_OUTPUT_ENABLE           0x02
-#define RFCC_CH_NONE                 0xE0
-#define RFCC_CH_RFC0_PA4             0x00
-#define RFCC_CH_RFC1_PA0             0x20
-#define RFCC_CH_RFC2_PA3             0x80
-#define RFCC_CH_RFC3_PB7             0xA0
-#define RFCC_CH_RFC4_PB6             0xC0
-#define RFCC_CH_RFC5_PB4             0x01
-#define RFCC_CH_RFC6_PB3             0x21
-#define RFCC_CH_RFC7_PB2             0x41
-#define RFCC_CH_RFC8_PB1             0x61
-#define RFCC_CH_RFC9_PB0             0x81
+#define MISCLVR_5V                   0xF0
+#define MISCLVR_BGON                 0x00
+#define MISCLVR_BG_DIV4              0x01
+#define MISCLVR_BG_DIV32             0x02
+#define MISCLVR_BG_AUTO              0x03
 
 //tm2c definitions
 #define TM2C_CLK_DISABLE             0x00
@@ -544,73 +426,212 @@ __sfr16          _t16c;
 #define TM3S_SCALE_DIV31             0x1E
 #define TM3S_SCALE_DIV32             0x1F
 
+//gpcc definitions
+#define GPCC_COMP_PLUS_VINT_R        0x00
+#define GPCC_COMP_PLUS_PA4           0x01
+#define GPCC_COMP_MINUS_PA3          0x00
+#define GPCC_COMP_MINUS_PA4          0x02
+#define GPCC_COMP_MINUS_BANDGAP_1V2  0x04
+#define GPCC_COMP_MINUS_VINT_R       0x06
+#define GPCC_COMP_MINUS_PB6          0x08
+#define GPCC_COMP_MINUS_PB7          0x0A
+#define GPCC_COMP_OUT_INVERT         0x10
+#define GPCC_COMP_OUT_TO_TM2CLK      0x20
+#define GPCC_COMP_RESULT_NEGATIV     0x00
+#define GPCC_COMP_RESULT_POSITIV     0x40
+#define GPCC_COMP_ENABLE             0x80
+
+//gpcs definitions
+#define GPCS_COMP_CASE1              0x00
+#define GPCS_COMP_CASE2              0x10
+#define GPCS_COMP_CASE3              0x20
+#define GPCS_COMP_CASE4              0x30
+#define GPCS_COMP_WAKEUP_ENABLE      0x40
+#define GPCS_COMP_OUTPUT_PA0         0x80
+
+//rfcc definitions
+#define RFCC_ENABLE                  0x10
+#define RFCC_MODE_R_TYPE             0x00
+#define RFCC_MODE_C_TYPE             0x08
+#define RFCC_OVERFLOW                0x04
+#define RFCC_OUTPUT_ENABLE           0x02
+#define RFCC_CH_NONE                 0xE0
+#define RFCC_CH_RFC0_PA4             0x00
+#define RFCC_CH_RFC1_PA0             0x20
+#define RFCC_CH_RFC2_PA3             0x80
+#define RFCC_CH_RFC3_PB7             0xA0
+#define RFCC_CH_RFC4_PB6             0xC0
+#define RFCC_CH_RFC5_PB4             0x01
+#define RFCC_CH_RFC6_PB3             0x21
+#define RFCC_CH_RFC7_PB2             0x41
+#define RFCC_CH_RFC8_PB1             0x61
+#define RFCC_CH_RFC9_PB0             0x81
+
 //pwmg0c definitions
 #define PWMG0C_ENABLE                0x80
 #define PWMG0C_OUT_STATUS            0x40
 #define PWMG0C_OUT_INVERT            0x20
-#define PWMG0C_OUT_PWMG0             0x00
-#define PWMG0C_OUT_PWMG0_X_OR_PWMG1  0x10
+#define PWMG0C_RESET_COUNTER         0x10
 #define PWMG0C_OUT_NONE              0x00
 #define PWMG0C_OUT_PB5               0x02
-#define PWMG0C_OUT_PC2               0x04
 #define PWMG0C_OUT_PA0               0x06
 #define PWMG0C_OUT_PB4               0x08
-#define PWMG0C_OUT_PB6               0x0A
-#define PWMG0C_GEN_XOR               0x00
-#define PWMG0C_GEN_OR                0x01
+#define PWMG0C_CLK_SYSCLK            0x00
+#define PWMG0C_CLK_IHRC              0x01
 
-//pwmgclk definitions
-#define PWMGCLK_PWMG_ENABLE          0x80
-#define PWMGCLK_PWMG_DISABLE         0x00
-
-#define PWMGCLK_PRESCALE_NONE        0x00
-#define PWMGCLK_PRESCALE_DIV2        0x01
-#define PWMGCLK_PRESCALE_DIV4        0x02
-#define PWMGCLK_PRESCALE_DIV8        0x03
-#define PWMGCLK_PRESCALE_DIV16       0x04
-#define PWMGCLK_PRESCALE_DIV32       0x05
-#define PWMGCLK_PRESCALE_DIV64       0x06
-#define PWMGCLK_PRESCALE_DIV128      0x07
-#define PWMGCLK_CLK_SYSCLK           0x00
-#define PWMGCLK_CLK_IHRC             0x01
+//pwmg0s definitions
+#define PWMG0_INT_AT_DUTY            0x00
+#define PWMG0_INT_AT_0               0x80
+#define PWMG0_PRESCALE_NONE          0x00
+#define PWMG0_PRESCALE_DIV4          0x20
+#define PWMG0_PRESCALE_DIV16         0x40
+#define PWMG0_PRESCALE_DIV64         0x60
+#define PWMG0_SCALE_NONE             0x00
+#define PWMG0_SCALE_DIV2             0x01
+#define PWMG0_SCALE_DIV3             0x02
+#define PWMG0_SCALE_DIV4             0x03
+#define PWMG0_SCALE_DIV5             0x04
+#define PWMG0_SCALE_DIV6             0x05
+#define PWMG0_SCALE_DIV7             0x06
+#define PWMG0_SCALE_DIV8             0x07
+#define PWMG0_SCALE_DIV9             0x08
+#define PWMG0_SCALE_DIV10            0x09
+#define PWMG0_SCALE_DIV11            0x0A
+#define PWMG0_SCALE_DIV12            0x0B
+#define PWMG0_SCALE_DIV13            0x0C
+#define PWMG0_SCALE_DIV14            0x0D
+#define PWMG0_SCALE_DIV15            0x0E
+#define PWMG0_SCALE_DIV16            0x0F
+#define PWMG0_SCALE_DIV17            0x10
+#define PWMG0_SCALE_DIV18            0x11
+#define PWMG0_SCALE_DIV19            0x12
+#define PWMG0_SCALE_DIV20            0x13
+#define PWMG0_SCALE_DIV21            0x14
+#define PWMG0_SCALE_DIV22            0x15
+#define PWMG0_SCALE_DIV23            0x16
+#define PWMG0_SCALE_DIV24            0x17
+#define PWMG0_SCALE_DIV25            0x18
+#define PWMG0_SCALE_DIV26            0x19
+#define PWMG0_SCALE_DIV27            0x1A
+#define PWMG0_SCALE_DIV28            0x1B
+#define PWMG0_SCALE_DIV29            0x1C
+#define PWMG0_SCALE_DIV30            0x1D
+#define PWMG0_SCALE_DIV31            0x1E
+#define PWMG0_SCALE_DIV32            0x1F
 
 //pwmg1c definitions
 #define PWMG1C_ENABLE                0x80
 #define PWMG1C_OUT_STATUS            0x40
 #define PWMG1C_OUT_INVERT            0x20
-#define PWMG1C_OUT_PWMG1             0x00
-#define PWMG1C_OUT_PWMG2             0x10
+#define PWMG1C_RESET_COUNTER         0x10
 #define PWMG1C_OUT_NONE              0x00
 #define PWMG1C_OUT_PB6               0x02
-#define PWMG1C_OUT_PC3               0x04
 #define PWMG1C_OUT_PA4               0x06
 #define PWMG1C_OUT_PB7               0x08
+#define PWMG1C_CLK_SYSCLK            0x00
+#define PWMG1C_CLK_IHRC              0x01
+
+//pwmg1s definitions
+#define PWMG1_INT_AT_DUTY            0x00
+#define PWMG1_INT_AT_0               0x80
+#define PWMG1_PRESCALE_NONE          0x00
+#define PWMG1_PRESCALE_DIV4          0x20
+#define PWMG1_PRESCALE_DIV16         0x40
+#define PWMG1_PRESCALE_DIV64         0x60
+#define PWMG1_SCALE_NONE             0x00
+#define PWMG1_SCALE_DIV2             0x01
+#define PWMG1_SCALE_DIV3             0x02
+#define PWMG1_SCALE_DIV4             0x03
+#define PWMG1_SCALE_DIV5             0x04
+#define PWMG1_SCALE_DIV6             0x05
+#define PWMG1_SCALE_DIV7             0x06
+#define PWMG1_SCALE_DIV8             0x07
+#define PWMG1_SCALE_DIV9             0x08
+#define PWMG1_SCALE_DIV10            0x09
+#define PWMG1_SCALE_DIV11            0x0A
+#define PWMG1_SCALE_DIV12            0x0B
+#define PWMG1_SCALE_DIV13            0x0C
+#define PWMG1_SCALE_DIV14            0x0D
+#define PWMG1_SCALE_DIV15            0x0E
+#define PWMG1_SCALE_DIV16            0x0F
+#define PWMG1_SCALE_DIV17            0x10
+#define PWMG1_SCALE_DIV18            0x11
+#define PWMG1_SCALE_DIV19            0x12
+#define PWMG1_SCALE_DIV20            0x13
+#define PWMG1_SCALE_DIV21            0x14
+#define PWMG1_SCALE_DIV22            0x15
+#define PWMG1_SCALE_DIV23            0x16
+#define PWMG1_SCALE_DIV24            0x17
+#define PWMG1_SCALE_DIV25            0x18
+#define PWMG1_SCALE_DIV26            0x19
+#define PWMG1_SCALE_DIV27            0x1A
+#define PWMG1_SCALE_DIV28            0x1B
+#define PWMG1_SCALE_DIV29            0x1C
+#define PWMG1_SCALE_DIV30            0x1D
+#define PWMG1_SCALE_DIV31            0x1E
+#define PWMG1_SCALE_DIV32            0x1F
 
 //pwmg2c definitions
 #define PWMG2C_ENABLE                0x80
 #define PWMG2C_OUT_STATUS            0x40
 #define PWMG2C_OUT_INVERT            0x20
-#define PWMG2C_OUT_TOGGLE            0x10
+#define PWMG2C_RESET_COUNTER         0x10
 #define PWMG2C_OUT_NONE              0x00
 #define PWMG2C_OUT_PB3               0x02
-#define PWMG2C_OUT_PC0               0x04
 #define PWMG2C_OUT_PA3               0x06
 #define PWMG2C_OUT_PB2               0x08
 #define PWMG2C_OUT_PA5               0x0A
-#define PWMG2C_OUT_PB5               0x0C
+#define PWMG2C_CLK_SYSCLK            0x00
+#define PWMG2C_CLK_IHRC              0x01
+
+//pwmg2s definitions
+#define PWMG2_INT_AT_DUTY            0x00
+#define PWMG2_INT_AT_0               0x80
+#define PWMG2_PRESCALE_NONE          0x00
+#define PWMG2_PRESCALE_DIV4          0x20
+#define PWMG2_PRESCALE_DIV16         0x40
+#define PWMG2_PRESCALE_DIV64         0x60
+#define PWMG2_SCALE_NONE             0x00
+#define PWMG2_SCALE_DIV2             0x01
+#define PWMG2_SCALE_DIV3             0x02
+#define PWMG2_SCALE_DIV4             0x03
+#define PWMG2_SCALE_DIV5             0x04
+#define PWMG2_SCALE_DIV6             0x05
+#define PWMG2_SCALE_DIV7             0x06
+#define PWMG2_SCALE_DIV8             0x07
+#define PWMG2_SCALE_DIV9             0x08
+#define PWMG2_SCALE_DIV10            0x09
+#define PWMG2_SCALE_DIV11            0x0A
+#define PWMG2_SCALE_DIV12            0x0B
+#define PWMG2_SCALE_DIV13            0x0C
+#define PWMG2_SCALE_DIV14            0x0D
+#define PWMG2_SCALE_DIV15            0x0E
+#define PWMG2_SCALE_DIV16            0x0F
+#define PWMG2_SCALE_DIV17            0x10
+#define PWMG2_SCALE_DIV18            0x11
+#define PWMG2_SCALE_DIV19            0x12
+#define PWMG2_SCALE_DIV20            0x13
+#define PWMG2_SCALE_DIV21            0x14
+#define PWMG2_SCALE_DIV22            0x15
+#define PWMG2_SCALE_DIV23            0x16
+#define PWMG2_SCALE_DIV24            0x17
+#define PWMG2_SCALE_DIV25            0x18
+#define PWMG2_SCALE_DIV26            0x19
+#define PWMG2_SCALE_DIV27            0x1A
+#define PWMG2_SCALE_DIV28            0x1B
+#define PWMG2_SCALE_DIV29            0x1C
+#define PWMG2_SCALE_DIV30            0x1D
+#define PWMG2_SCALE_DIV31            0x1E
+#define PWMG2_SCALE_DIV32            0x1F
 
 //rop definitions
-#define ROP_INT_SRC_PB0                0x00
-#define ROP_INT_SRC_PA4                0x01
-#define ROP_INT_SRC_PA0                0x00
-#define ROP_INT_SRC_PB5                0x02
-#define ROP_TMX_6BIT                   0x00
-#define ROP_TMX_7BIT                   0x10
-#define ROP_TMX_16MHZ                  0x00
-#define ROP_TMX_32MHZ                  0x20
-#define ROP_PURE_PWM                   0x00
-#define ROP_GPC_PWM                    0x40
-#define ROP_PWM_16MHZ                  0x00
-#define ROP_PWM_32MHZ                  0x80
+#define ROP_TMX_6BIT                 0x00
+#define ROP_TMX_7BIT                 0x10
+#define ROP_TMX_16MHZ                0x00
+#define ROP_TMX_32MHZ                0x20
+#define ROP_PURE_PWM                 0x00
+#define ROP_GPC_PWM                  0x40
+#define ROP_PWM_16MHZ                0x00
+#define ROP_PWM_32MHZ                0x80
 
-#endif //__PFS173_H__
+#endif //__PFC154_H__

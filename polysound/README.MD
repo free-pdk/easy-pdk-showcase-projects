@@ -24,6 +24,6 @@ $ easypdkprog --icname=PFS173 write build/polysound.PFS173.ihx
 Wiring:
 =======
 
-PADAUK GND    ==> SPEAKER
-PADAUK PA.6   ==> SPEAKER
+- PADAUK GND    ==> SPEAKER
+- PADAUK PA.3   ==> SPEAKER
 

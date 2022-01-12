@@ -33,9 +33,9 @@ __misclvr = 0x28
 
 .macro EASY_PDK_INIT_SYSCLOCK_8MHZ
         mov a, #0xE0
-        mov __misclvr, a
+        mov.io __misclvr, a
         mov a, #0x34
-        mov __clkmd, a
+        mov.io __clkmd, a
 .endm
 
 .macro EASY_PDK_CALIBRATE_IHRC_8192000HZ_AT_5V

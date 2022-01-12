@@ -17,6 +17,7 @@
 
 ;defines for PFS154
 
+.area RSEG (ABS)
 __clkmd   = 0x03
 
 __inten   = 0x04
@@ -33,9 +34,9 @@ __misclvr = 0x1b
 
 .macro EASY_PDK_INIT_SYSCLOCK_8MHZ
         mov a, #0x20
-        mov __misclvr, a
+        mov.io __misclvr, a
         mov a, #0x34
-        mov __clkmd, a
+        mov.io __clkmd, a
 .endm
 
 .macro EASY_PDK_CALIBRATE_IHRC_8192000HZ_AT_5V

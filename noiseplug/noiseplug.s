@@ -64,7 +64,7 @@ clear_sram:
 isr:
         pushaf
         inc int_ctr
-        set0 __intrq, #6          ;clear INTRQ_TM2
+        set0.io __intrq, #6       ;clear INTRQ_TM2
         popaf
         reti
         
@@ -73,13 +73,13 @@ main_cont:
         EASY_PDK_CALIBRATE_IHRC_8192000HZ_AT_5V
 
         mov a, #0x2a              ;TM2C = TM2C_CLK_IHRC | TM2C_OUT_PA3 | TM2C_MODE_PWM
-        mov __tm2c, a             ;PWM clock and output mode
+        mov.io __tm2c, a          ;PWM clock and output mode
         mov a, #0x01              ;TM2S_PWM_RES_8BIT | TM2S_PRESCALE_NONE | TM2S_SCALE_DIV2
-        mov __tm2s, a             ;PWM speed IHRC(16.384MHz) /1 /2 /256(8bit) = 32000 Hz
+        mov.io __tm2s, a          ;PWM speed IHRC(16.384MHz) /1 /2 /256(8bit) = 32000 Hz
         mov a, #0x40
-        mov __inten, a            ;enable TM2 interrupt
+        mov.io __inten, a         ;enable TM2 interrupt
         mov a, #0x00
-        mov __intrq, a
+        mov.io __intrq, a
 
         mov a, #LEADSIZE          ;setup variables
         mov lead1, a
@@ -106,7 +106,7 @@ mainloop:
         clear int_ctr
 
         mov a, sample
-        mov __tm2b, a             ;output the new sample
+        mov.io __tm2b, a          ;output the new sample
 
         ;sample = 0
         clear sample
@@ -157,7 +157,7 @@ norestart:
         and a, #7
         call getbassbeat
         add a, #0
-        t0sn f, z
+        t0sn.io f, z
         goto nobassbeat
         sl tp2
         slc tp1
@@ -190,7 +190,7 @@ nobassbeat:
         mov a, i+2
         and a, #0xc0
         sub a, #0xc0
-        t0sn f, z
+        t0sn.io f, z
         goto noaddbass
 addbass:
         ;sample += (bass >> 2)
@@ -246,7 +246,7 @@ noaddbass:
         mov a, i
         sr a
         add a, #0
-        t0sn f, z
+        t0sn.io f, z
         goto noarp
 
         ; r20 = arptiming[(i >> 12) & 3]
@@ -260,7 +260,7 @@ noaddbass:
         mov a, i+1
         sr a
         and a, #7
-        t0sn f, z
+        t0sn.io f, z
         goto arptiming_noshift
 
 arptiming_shift:
@@ -445,7 +445,7 @@ noleadupdate:
         ; if (!(boost & boostmask)): take three quarters
 ;        mov a, tp4
 ;        and a, boost
-;        t0sn f, z
+;        t0sn.io f, z
 ;        goto noreduce
 ;        sr tp2
 ;        mov a, tp2

@@ -15,18 +15,18 @@ void pdkspi_init(void)
 uint8_t pdkspi_sendreceive(uint8_t s)
 {
   __asm
-     mov a, #8                              ; loop 8 times
+     mov a, #8                                 ; loop 8 times
 1$:
-     set0 _ASMS(SPI_PORT), #(SPI_OUT_PIN)   ; SPI-OUT = 0
-     t0sn _pdkspi_sendreceive_PARM_1, #7    ; s.7==0 ?
-     set1 _ASMS(SPI_PORT), #(SPI_OUT_PIN)   ; SPI-OUT = 1
-     set1 _ASMS(SPI_PORT), #(SPI_CLK_PIN)   ; SPI-CLK = 1
-     sl _pdkspi_sendreceive_PARM_1          ; s<<=1
-     t0sn _ASMS(SPI_PORT), #(SPI_IN_PIN)    ; SPI-IN==0 ?
-     set1 _pdkspi_sendreceive_PARM_1, #0    ; s.0=1
-     set0 _ASMS(SPI_PORT), #(SPI_CLK_PIN)   ; SPI-CLK = 0
-     dzsn a                                 ; loop--
-     goto 1$                                ; loop again if>0
+     set0.io _ASMS(SPI_PORT), #(SPI_OUT_PIN)   ; SPI-OUT = 0
+     t0sn _pdkspi_sendreceive_PARM_1, #7       ; s.7==0 ?
+     set1.io _ASMS(SPI_PORT), #(SPI_OUT_PIN)   ; SPI-OUT = 1
+     set1.io _ASMS(SPI_PORT), #(SPI_CLK_PIN)   ; SPI-CLK = 1
+     sl _pdkspi_sendreceive_PARM_1             ; s<<=1
+     t0sn.io _ASMS(SPI_PORT), #(SPI_IN_PIN)    ; SPI-IN==0 ?
+     set1 _pdkspi_sendreceive_PARM_1, #0       ; s.0=1
+     set0.io _ASMS(SPI_PORT), #(SPI_CLK_PIN)   ; SPI-CLK = 0
+     dzsn a                                    ; loop--
+     goto 1$                                   ; loop again if>0
   __endasm;
   return s;
 }

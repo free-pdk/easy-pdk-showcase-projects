@@ -12,6 +12,11 @@ void pdkspi_init(void)
   SPI_PORT |= (1<<SPI_NCS_PIN) | (1<<SPI_OUT_PIN);
 }
 
+#define __SDCC_VER (__SDCC_VERSION_MAJOR*10000 + __SDCC_VERSION_MINOR*100 + __SDCC_VERSION_PATCH)
+#if(!(__SDCC_VER>=40110))
+#error "SDCC 4.1.10 or newer is required"
+#endif
+
 uint8_t pdkspi_sendreceive(uint8_t s)
 {
   __asm

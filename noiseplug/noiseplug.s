@@ -49,7 +49,7 @@ LEADINIT2 = 3571
         .org 0x0000
 
         mov a, #(_stack)
-        mov sp, a
+        mov.io sp, a
         mov p, a
         clear p+1
         mov a, #0

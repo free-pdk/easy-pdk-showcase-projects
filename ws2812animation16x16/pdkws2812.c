@@ -7,11 +7,6 @@ void pdkws2812_init(void)
   WS2812_PORTC |= 1<<WS2812_PIN;
 }
 
-#define __SDCC_VER (__SDCC_VERSION_MAJOR*10000 + __SDCC_VERSION_MINOR*100 + __SDCC_VERSION_PATCH)
-#if(!(__SDCC_VER>=40110))
-#error "SDCC 4.1.10 or newer is required"
-#endif
-
 //adopted from cpldcpu changes: disable interrupts while sending, replaced swapc since it is not available on 13 bit variants
 void pdkws2812_send_8bit(uint8_t val)
 {

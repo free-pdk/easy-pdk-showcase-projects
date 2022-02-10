@@ -104,27 +104,25 @@ static const uint8_t RndData[64] =
     0x18,0xE8,0x64,0x26,0x8E,0xB8,0xEE,0xCD,0xD1,0x81,0x2E,0xCB,0x9B,0x63,0x9B,0x2E
 };
 
-// This constant controls the song playback rate.
-// It is calculated with round(720 * 16 / 76.2939),
-// where 720 Hz is the desired playback tick rate
-// and 76.2939 Hz is the interval between TMR0
-// wrapping back to 0 (which comes from 20e6/4/256/256).
-enum { TIMING_NOMINATOR = 67 };
-
-// This constant controls the pitch of the melody.
-// It is calculated with 121.6796875 / 19531.25
-// where 19531.25 Hz is the interval between TMR0 increments
-// (which on the PIC16F628A comes from 20e6/4/256),
-// and 121.6796875 happens to be some finetuning.
-#define FREQ_SCALE 0.002765
-
-// Amplitudes. Chosen carefully in such manner that the sample never clips.
-enum { SQUARE0 = 3, SQUARE1 = 13, TRIVOLUME = 12, NOISE0 = 8, NOISE1 = 13, OFFSET = 0x66 };
-
-enum { FLAG_TICK = 0x01, FLAG_CURVECHANGED = 0x02 };
-
 int main(void)
 {
+    // This constant controls the song playback rate.
+    // It is calculated with round(720 * 16 / 76.2939),
+    // where 720 Hz is the desired playback tick rate
+    // and 76.2939 Hz is the interval between TMR0
+    // wrapping back to 0 (which comes from 20e6/4/256/256).
+    enum { TIMING_NOMINATOR = 67 };
+
+    // This constant controls the pitch of the melody.
+    // It is calculated with 121.6796875 / 19531.25
+    // where 19531.25 Hz is the interval between TMR0 increments
+    // (which on the PIC16F628A comes from 20e6/4/256),
+    // and 121.6796875 happens to be some finetuning.
+    #define FREQ_SCALE 0.002765
+
+    // Amplitudes. Chosen carefully in such manner that the sample never clips.
+    enum { SQUARE0 = 3, SQUARE1 = 13, TRIVOLUME = 12, NOISE0 = 8, NOISE1 = 13, OFFSET = 0x66 };
+
     // Loop forever.
     for(;;)
     {
@@ -138,6 +136,8 @@ int main(void)
         // enough for our purposes (simulation tests indicate we are
         // getting about 12500 Hz playback).
         static uint8_t  prevmul = 0, flag, speed;
+
+        enum { FLAG_TICK = 0x01, FLAG_CURVECHANGED = 0x02 };
 
         if(prevmul == TMR0) continue;
 

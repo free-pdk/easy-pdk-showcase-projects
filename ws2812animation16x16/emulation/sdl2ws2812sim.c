@@ -7,6 +7,9 @@
 //#define PMS150C
 
 // rename main function to pdk_main and setup macros to emulate SDCC compatibility
+#define __SDCC_VERSION_MAJOR 4
+#define __SDCC_VERSION_MINOR 2
+#define __SDCC_VERSION_PATCH 0
 #define __SDCC_pdk13
 #define __SDCC_pdk14
 #define __SDCC_pdk15

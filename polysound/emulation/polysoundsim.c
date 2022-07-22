@@ -7,6 +7,9 @@ void SEND_SAMPLE(uint8_t sample);
 
 // rename main function to pdk_main and setup macros to emulate SDCC compatibility
 #define PFS173
+#define __SDCC_VERSION_MAJOR 4
+#define __SDCC_VERSION_MINOR 2
+#define __SDCC_VERSION_PATCH 0
 #define __SDCC_pdk15
 #define __sfr   volatile uint8_t
 #define __sfr16 volatile uint16_t

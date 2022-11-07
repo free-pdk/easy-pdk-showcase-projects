@@ -72,10 +72,10 @@ main_cont:
         ;tune SYSCLK to 8.192MHz @5.00V
         EASY_PDK_CALIBRATE_IHRC_8192000HZ_AT_5V
 
-        mov a, #0x2a              ;TM2C = TM2C_CLK_IHRC | TM2C_OUT_PA3 | TM2C_MODE_PWM
-        mov.io __tm2c, a          ;PWM clock and output mode
         mov a, #0x01              ;TM2S_PWM_RES_8BIT | TM2S_PRESCALE_NONE | TM2S_SCALE_DIV2
         mov.io __tm2s, a          ;PWM speed IHRC(16.384MHz) /1 /2 /256(8bit) = 32000 Hz
+        mov a, #0x2a              ;TM2C = TM2C_CLK_IHRC | TM2C_OUT_PA3 | TM2C_MODE_PWM
+        mov.io __tm2c, a          ;PWM clock and output mode
         mov a, #0x40
         mov.io __inten, a         ;enable TM2 interrupt
         mov a, #0x00

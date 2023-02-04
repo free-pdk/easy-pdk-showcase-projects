@@ -9,7 +9,7 @@
 // rename main function to pdk_main and setup macros to emulate SDCC compatibility
 #define __SDCC_VERSION_MAJOR 4
 #define __SDCC_VERSION_MINOR 2
-#define __SDCC_VERSION_PATCH 0
+#define __SDCC_VERSION_PATCH 11
 #define __SDCC_pdk13
 #define __SDCC_pdk14
 #define __SDCC_pdk15
@@ -102,7 +102,7 @@ int main(int argc, char* argv[]) {
   }
   atexit(SDL_Quit);
 
-  _sdcc_external_startup();                         //simulate call to _sdcc_external_startup()
+  __sdcc_external_startup();                         //simulate call to __sdcc_external_startup()
   pdk_main();                                       //simulate jump to main()
 
   return 0;

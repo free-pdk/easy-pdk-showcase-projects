@@ -21,7 +21,7 @@ void interrupt(void) __interrupt(0)
   }
 }
 
-unsigned char _sdcc_external_startup(void)
+unsigned char __sdcc_external_startup(void)
 {
   EASY_PDK_INIT_SYSCLOCK_4MHZ();              //use 4MHz so we can use 3.0V VDD
   EASY_PDK_CALIBRATE_IHRC(4000000,3000);      //tune SYSCLK = 4MHz @ 3.000V

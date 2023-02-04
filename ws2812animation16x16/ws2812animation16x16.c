@@ -27,7 +27,7 @@ void drawAnimation(const uint8_t* pal, const uint8_t* const* images, const uint8
   } while( repeat-- >0 );
 }
 
-unsigned char _sdcc_external_startup(void) {
+unsigned char __sdcc_external_startup(void) {
   EASY_PDK_INIT_SYSCLOCK_8MHZ();                                                //use 8MHz sysclock
   EASY_PDK_CALIBRATE_IHRC(8000000,5000);                                        //tune SYSCLK to 8MHz @ 5.000V
   return 0;                                                                     //perform normal initialization

@@ -13,7 +13,7 @@
 #endif
 #define TMR0            TM3CT
 
-unsigned char _sdcc_external_startup(void)
+unsigned char __sdcc_external_startup(void)
 {
   EASY_PDK_INIT_SYSCLOCK_8MHZ();                                   //use 8MHz sysclock
   EASY_PDK_CALIBRATE_IHRC(11264000,5000);                          //tune SYSCLK to 11.264MHz (overclock) @5.00V

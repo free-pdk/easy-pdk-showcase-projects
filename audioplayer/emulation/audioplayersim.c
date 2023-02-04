@@ -16,7 +16,7 @@ void SEND_SAMPLE(uint8_t sample);
 #define __SDCC_pdk15
 #define __SDCC_VERSION_MAJOR 4
 #define __SDCC_VERSION_MINOR 2
-#define __SDCC_VERSION_PATCH 0
+#define __SDCC_VERSION_PATCH 11
 #define __sfr   volatile uint8_t
 #define __sfr16 volatile uint16_t
 #define __at(x)
@@ -84,6 +84,11 @@ uint8_t pdkspi_sendreceive(uint8_t s) {
   uint8_t b = sound_raw[emu_spi_byte++];
 
   INTRQ = INTEN; interrupt();                       //simulate (all enabled) interrupts
+
+  SDL_Event event;
+  if( SDL_PollEvent(&event) &&  (SDL_QUIT==event.type) )
+    exit(0);
+
   return b;
 }
 
@@ -102,7 +107,7 @@ int main(int argc, char* argv[]) {
   SDL_AudioDeviceID dev = SDL_OpenAudioDevice(NULL, 0, &sdlas, NULL, 0);
   SDL_PauseAudioDevice(dev, 0);
 
-  _sdcc_external_startup();                         //simulate call to _sdcc_external_startup()
+  __sdcc_external_startup();                        //simulate call to __sdcc_external_startup()
   pdk_main();                                       //simulate jump to main()
 
   return 0;
